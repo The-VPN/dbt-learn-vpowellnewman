@@ -1,7 +1,6 @@
 version: 2
 
 models:
-models:
   - name: customers
     description: "{{ doc('customers') }}"
     columns:
@@ -40,3 +39,28 @@ models:
             - relationships:
                 to: ref('stg_customers')
                 field: customer_id
+ 
+  - name: stg_payments
+    description: This model cleans up the payments data
+    columns:
+      - name: payment_id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+                to: ref('stg_orders')
+                field: order_id
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['success', 'fail']
+      - name: amount
+        description: amount of payment in dollars (amount/100)
+      - name: created_at
+        description: when the payment was attempted
+        tests:
+            - not_null              
